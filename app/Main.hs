@@ -9,34 +9,43 @@ import Text.Megaparsec
 import Text.Megaparsec.Char
 import Text.Megaparsec.Error
 import Data.Void (Void)
-
-type Parser = Parsec Void String
+import Text.Megaparsec.Char.Lexer (decimal)
+import qualified Text.Megaparsec as Megaparsec
 
 rstrip :: String -> String
 rstrip = reverse . dropWhile (== '\n') . reverse
 
-assembly :: String -> String
-assembly retval = rstrip $ unlines
+type Parser = Parsec Void String
+
+data CToken = TInt | TMain | TOpenBrace | TCloseBrace | TReturn | TNumber Int | TSemicolon
+    deriving (Show, Eq)
+
+lexer :: Parser [CToken]
+lexer = many (lex token) <* eof
+  where
+    lex = (<* space)
+    token = choice
+      [ TInt <$ string "int"
+      , TMain <$ string "main()"
+      , TOpenBrace <$ char '{'
+      , TCloseBrace <$ char '}'
+      , TReturn <$ string "return"
+      , TNumber <$> lex decimal
+      , TSemicolon <$ char ';'
+      ]
+
+parser :: [CToken] -> Either String Int
+parser tokens = case tokens of
+    [TInt, TMain, TOpenBrace, TReturn, TNumber n, TSemicolon, TCloseBrace] -> Right n
+    _ -> Left "Invalid tokens"
+
+codegen :: String -> String
+codegen retval = rstrip $ unlines
     [ ".global main"
     , "main:"
     , "  mov w0, " ++ retval
     , "  ret"
     ]
-
-cSourceParser :: Parser String
-cSourceParser = do
-    try $ string "int" >> space >> string "main()" >> space >> char '{'
-    space  -- Consume any remaining whitespace
-    string "return"
-    space
-    retval <- some digitChar  -- Use digitChar here
-    space
-    char ';'
-    space  -- Consume any remaining whitespace
-    char '}'
-    many spaceChar  -- Skip any trailing whitespace or newlines
-    eof
-    return retval
 
 main = do
     args <- getArgs
@@ -44,9 +53,13 @@ main = do
         [sourceFile] -> do
             let assemblyFile = takeBaseName sourceFile ++ ".s"
             source <- readFile sourceFile
-            case runParser cSourceParser "" source of
-                Left err -> putStrLn $ "Error parsing C source: " ++ show err
-                Right retval -> withFile assemblyFile WriteMode $ \outfile -> do
-                    hPutStrLn outfile $ assembly retval
+            case runParser lexer "" source of
+                Left err -> putStrLn $ "Error lexing C source: " ++ show err
+                Right tokens -> do
+                    putStrLn $ "Tokens: " ++ show tokens
+                    case parser tokens of
+                        Left err -> putStrLn $ "Error parsing tokens: " ++ err
+                        Right retval -> withFile assemblyFile WriteMode $ \outfile -> do
+                            hPutStrLn outfile $ codegen $ show retval
         _ -> putStrLn "Usage: ./program <source_file>"
 

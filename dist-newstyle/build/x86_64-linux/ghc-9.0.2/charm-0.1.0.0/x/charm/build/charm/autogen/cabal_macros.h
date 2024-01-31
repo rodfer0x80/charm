@@ -30,7 +30,67 @@
   (major1) == 1 && (major2) <  3 || \
   (major1) == 1 && (major2) == 3 && (minor) <= 6)
 #endif /* MIN_VERSION_directory */
+/* package filepath-1.4.2.1 */
+#ifndef VERSION_filepath
+#define VERSION_filepath "1.4.2.1"
+#endif /* VERSION_filepath */
+#ifndef MIN_VERSION_filepath
+#define MIN_VERSION_filepath(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  4 || \
+  (major1) == 1 && (major2) == 4 && (minor) <= 2)
+#endif /* MIN_VERSION_filepath */
+/* package megaparsec-9.5.0 */
+#ifndef VERSION_megaparsec
+#define VERSION_megaparsec "9.5.0"
+#endif /* VERSION_megaparsec */
+#ifndef MIN_VERSION_megaparsec
+#define MIN_VERSION_megaparsec(major1,major2,minor) (\
+  (major1) <  9 || \
+  (major1) == 9 && (major2) <  5 || \
+  (major1) == 9 && (major2) == 5 && (minor) <= 0)
+#endif /* MIN_VERSION_megaparsec */
+/* package mtl-2.2.2 */
+#ifndef VERSION_mtl
+#define VERSION_mtl "2.2.2"
+#endif /* VERSION_mtl */
+#ifndef MIN_VERSION_mtl
+#define MIN_VERSION_mtl(major1,major2,minor) (\
+  (major1) <  2 || \
+  (major1) == 2 && (major2) <  2 || \
+  (major1) == 2 && (major2) == 2 && (minor) <= 2)
+#endif /* MIN_VERSION_mtl */
+/* package parsec-3.1.14.0 */
+#ifndef VERSION_parsec
+#define VERSION_parsec "3.1.14.0"
+#endif /* VERSION_parsec */
+#ifndef MIN_VERSION_parsec
+#define MIN_VERSION_parsec(major1,major2,minor) (\
+  (major1) <  3 || \
+  (major1) == 3 && (major2) <  1 || \
+  (major1) == 3 && (major2) == 1 && (minor) <= 14)
+#endif /* MIN_VERSION_parsec */
+/* package text-1.2.5.0 */
+#ifndef VERSION_text
+#define VERSION_text "1.2.5.0"
+#endif /* VERSION_text */
+#ifndef MIN_VERSION_text
+#define MIN_VERSION_text(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  2 || \
+  (major1) == 1 && (major2) == 2 && (minor) <= 5)
+#endif /* MIN_VERSION_text */
 
+/* tool cpphs-1.20.9 */
+#ifndef TOOL_VERSION_cpphs
+#define TOOL_VERSION_cpphs "1.20.9"
+#endif /* TOOL_VERSION_cpphs */
+#ifndef MIN_TOOL_VERSION_cpphs
+#define MIN_TOOL_VERSION_cpphs(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  20 || \
+  (major1) == 1 && (major2) == 20 && (minor) <= 9)
+#endif /* MIN_TOOL_VERSION_cpphs */
 /* tool gcc-13.2.1 */
 #ifndef TOOL_VERSION_gcc
 #define TOOL_VERSION_gcc "13.2.1"
@@ -91,6 +151,16 @@
   (major1) == 0 && (major2) <  68 || \
   (major1) == 0 && (major2) == 68 && (minor) <= 7)
 #endif /* MIN_TOOL_VERSION_hsc2hs */
+/* tool hscolour-1.24 */
+#ifndef TOOL_VERSION_hscolour
+#define TOOL_VERSION_hscolour "1.24"
+#endif /* TOOL_VERSION_hscolour */
+#ifndef MIN_TOOL_VERSION_hscolour
+#define MIN_TOOL_VERSION_hscolour(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  24 || \
+  (major1) == 1 && (major2) == 24 && (minor) <= 0)
+#endif /* MIN_TOOL_VERSION_hscolour */
 /* tool pkg-config-2.1.0 */
 #ifndef TOOL_VERSION_pkg_config
 #define TOOL_VERSION_pkg_config "2.1.0"

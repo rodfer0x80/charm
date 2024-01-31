@@ -8,14 +8,15 @@ fi
 
 # Assign the filename from the argument
 ASM_FILE=$1
-FILENAME=$(basename "$1" .s)
+OBJ_FILE="$(basename "$1" .s).o"
+ARM64_BIN="runme.arm64"
 
 # Assemble the assembly code to generate an object file
-aarch64-linux-gnu-as -o "$FILENAME.o" "$FILENAME.s"
+aarch64-linux-gnu-as -o "$OBJ_FILE" "$ASM_FILE"
 
 # Link the object file to generate an ARM64 binary
-aarch64-linux-gnu-gcc -o runme.arm64 "$FILENAME.o"
-rm "$FILENAME.o"
+aarch64-linux-gnu-gcc -o "$ARM64_BIN"  "$OBJ_FILE"
+rm "$OBJ_FILE"
 
 # Build the Docker image
 BUILDER_NAME="charm64"
@@ -30,9 +31,10 @@ fi
 
 # Build the Docker image
 docker buildx build --load --platform linux/arm64 -t charm64 -f Dockerfile .
+rm "$ARM64_BIN"
 
 # Run the Docker container
 docker run --platform linux/arm64 charm64
 
 # Remove runme elf arm64 executable
-rm runme.arm64
+#rm runme.arm64

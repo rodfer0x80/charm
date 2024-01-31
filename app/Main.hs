@@ -1,24 +1,52 @@
-import Control.Monad (unless, when)
-import System.Directory (doesFileExist)
+{-# LANGUAGE OverloadedStrings #-}
+
+import Control.Monad.Except
+import System.FilePath (takeBaseName)
+import System.IO (withFile, IOMode(WriteMode), hPutStrLn)
 import System.Environment (getArgs)
-import System.IO (IOMode (ReadMode), hGetContents, openFile)
+import Data.Text (pack, intercalate) 
+import Text.Megaparsec
+import Text.Megaparsec.Char
+import Text.Megaparsec.Error
+import Data.Void (Void)
 
-getValidArgs :: IO [String]
-getValidArgs = do
-  args <- getArgs
-  when (null args) $ error "Error: No arguments provided"
-  return args
+type Parser = Parsec Void String
 
-getValidFile :: String -> IO String
-getValidFile filename = do
-  fileExists <- doesFileExist filename
-  unless fileExists $ error "Error: File does not exist"
-  return filename
+rstrip :: String -> String
+rstrip = reverse . dropWhile (== '\n') . reverse
 
-readFileContents :: String -> IO String
-readFileContents filename = do
-  file <- openFile filename ReadMode
-  hGetContents file
+assembly :: String -> String
+assembly retval = rstrip $ unlines
+    [ ".global main"
+    , "main:"
+    , "  mov w0, " ++ retval
+    , "  ret"
+    ]
 
-main :: IO ()
-main = getValidArgs >>= getValidFile . head >>= readFileContents >>= putStrLn
+cSourceParser :: Parser String
+cSourceParser = do
+    try $ string "int" >> space >> string "main()" >> space >> char '{'
+    space  -- Consume any remaining whitespace
+    string "return"
+    space
+    retval <- some digitChar  -- Use digitChar here
+    space
+    char ';'
+    space  -- Consume any remaining whitespace
+    char '}'
+    many spaceChar  -- Skip any trailing whitespace or newlines
+    eof
+    return retval
+
+main = do
+    args <- getArgs
+    case args of
+        [sourceFile] -> do
+            let assemblyFile = takeBaseName sourceFile ++ ".s"
+            source <- readFile sourceFile
+            case runParser cSourceParser "" source of
+                Left err -> putStrLn $ "Error parsing C source: " ++ show err
+                Right retval -> withFile assemblyFile WriteMode $ \outfile -> do
+                    hPutStrLn outfile $ assembly retval
+        _ -> putStrLn "Usage: ./program <source_file>"
+

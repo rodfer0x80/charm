@@ -8,7 +8,7 @@ fi
 
 # Assign the filename from the argument
 C_FILE="$1"
-FILENAME=$(basename "$1" .c)
+ASM_FILE="$(basename "$1" .c).s"
 
 # Compile the C file
-aarch64-linux-gnu-gcc -O2 -S -o "$FILENAME.s" "$C_FILE"
+aarch64-linux-gnu-gcc -O2 -S -o "$ASM_FILE" "$C_FILE"

@@ -9,9 +9,11 @@ fi
 # Assign the filename from the argument
 C_FILE="$1"
 ASM_FILE="$(basename "$1" .c).s"
+ARM64_BIN="runme.arm64"
 
 "$PWD"/compiler.sh "$C_FILE"
 "$PWD"/assembler.sh "$ASM_FILE"
 RET=$?
 rm "$ASM_FILE"
+rm "$ARM64_BIN"
 exit $RET

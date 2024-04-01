@@ -1,19 +1,19 @@
 #!/bin/sh
 
-# Check if a C file is provided as an argument
 if [ -z "$1" ]; then
     echo "Usage: $0 <c_file>"
     exit 1
 fi
 
-# Assign the filename from the argument
+DEBUG="${2:-0}" # $2 or default to 0
 C_FILE="$1"
 ASM_FILE="$(basename "$1" .c).s"
-ARM64_BIN="runme.arm64"
+ARM64_BIN="$(basename "$1" .c).arm64"
 
 "$PWD"/compiler.sh "$C_FILE"
 "$PWD"/assembler.sh "$ASM_FILE"
-RET=$?
-rm "$ASM_FILE"
-rm "$ARM64_BIN"
-exit $RET
+if [[ $DEBUG -eq 0 ]]; then
+  "$PWD"/run.sh "$ARM64_BIN"
+else
+  strace -f "$PWD"/run.sh "$ARM64_BIN"
+fi

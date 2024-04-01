@@ -12,8 +12,4 @@ ARM64_BIN="$(basename "$1" .c).arm64"
 
 "$PWD"/compiler.sh "$C_FILE"
 "$PWD"/assembler.sh "$ASM_FILE"
-if [[ $DEBUG -eq 0 ]]; then
-  "$PWD"/run.sh "$ARM64_BIN"
-else
-  strace -f "$PWD"/run.sh "$ARM64_BIN"
-fi
+"$PWD"/run.sh "$ARM64_BIN" $DEBUG
